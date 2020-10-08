@@ -29,16 +29,4 @@ export const FormContent = styled.form`
     text-align: center;
     margin-bottom: 40px;
   }
-
-  button {
-    background: #547eff;
-    border-radius: 10px;
-    border: 0;
-    height: 50px;
-    font-size: 18px;
-    font-weight: 500;
-    margin-top: 40px;
-    color: #fff;
-    text-transform: uppercase;
-  }
 `;
