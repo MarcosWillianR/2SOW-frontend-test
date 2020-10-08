@@ -29,6 +29,7 @@
     "prettier"
   ],
   "rules": {
+    "camelcase": "off",
     "arrow-parens": "off",
     "operator-linebreak": "off",
     "implicit-arrow-linebreak": "off",
