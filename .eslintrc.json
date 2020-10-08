@@ -29,6 +29,7 @@
     "prettier"
   ],
   "rules": {
+    "arrow-parens": "off",
     "react/prop-types": "off",
     "react/jsx-props-no-spreading": "off",
     "prettier/prettier": "error",
