@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Form as UnformForm } from '@unform/web';
 
 export const Container = styled.div`
   display: flex;
@@ -14,7 +15,7 @@ export const Container = styled.div`
   }
 `;
 
-export const FormContent = styled.form`
+export const Form = styled(UnformForm)`
   display: flex;
   flex-direction: column;
   padding: 44px;
