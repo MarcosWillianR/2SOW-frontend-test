@@ -1,9 +1,12 @@
 import styled, { css } from 'styled-components';
 
+import Tooltip from '../../Tooltip';
+
 interface ContainerProps {
   hasIcon: boolean;
   isFocused: boolean;
   isFilled: boolean;
+  isErrored: boolean;
 }
 
 export const Container = styled.div<ContainerProps>`
@@ -11,7 +14,9 @@ export const Container = styled.div<ContainerProps>`
   background: #f3f2f2;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
-  border: 2px solid ${props => (props.isFocused ? '#547eff' : '#f3f2f2')};
+  border: 2px solid #f3f2f2;
+  ${props => props.isErrored && 'border-color: #c53030;'}
+  ${props => props.isFocused && 'border-color: #547eff;'}
   min-width: 350px;
   width: 100%;
   height: 50px;
@@ -21,7 +26,7 @@ export const Container = styled.div<ContainerProps>`
   transition: all 0.5s ease;
 
   input {
-    ${props => (props.hasIcon ? 'padding-right: 24px;' : 'padding: 0 24px;')}
+    ${props => !props.hasIcon && 'padding: 0 24px;'}
     align-self: stretch;
     flex: 1;
     border-radius: 10px;
@@ -45,4 +50,17 @@ export const Container = styled.div<ContainerProps>`
         color: #547eff;
       }
     `}
+`;
+
+export const Error = styled(Tooltip)`
+  display: flex;
+  align-items: center;
+
+  span {
+    background: #c53030;
+
+    &:before {
+      border-color: #c53030 transparent;
+    }
+  }
 `;

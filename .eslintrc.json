@@ -35,8 +35,18 @@
     "react/prop-types": "off",
     "react/jsx-props-no-spreading": "off",
     "prettier/prettier": "error",
+    "no-unused-expressions": "off",
     "react-hooks/rules-of-hooks": "error",
     "no-use-before-define": "off",
+    "object-curly-newline": [
+      "error",
+      {
+        "ObjectExpression": "always",
+        "ObjectPattern": {
+          "multiline": true
+        }
+      }
+    ],
     "@typescript-eslint/no-use-before-define": [
       "error"
     ],
