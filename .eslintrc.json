@@ -38,15 +38,7 @@
     "no-unused-expressions": "off",
     "react-hooks/rules-of-hooks": "error",
     "no-use-before-define": "off",
-    "object-curly-newline": [
-      "error",
-      {
-        "ObjectExpression": "always",
-        "ObjectPattern": {
-          "multiline": true
-        }
-      }
-    ],
+    "object-curly-newline": "off",
     "@typescript-eslint/no-use-before-define": [
       "error"
     ],

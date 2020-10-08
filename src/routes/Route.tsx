@@ -5,6 +5,8 @@ import {
   Redirect,
 } from 'react-router-dom';
 
+import { useAuth } from '../hooks/Auth';
+
 interface RouteProps extends NativeRouteProps {
   isPrivate?: boolean;
   component: React.ComponentType;
@@ -15,20 +17,20 @@ const Route: React.FC<RouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const token = false;
+  const { signed } = useAuth();
 
   return (
     <NativeRoute
       {...rest}
       render={({ location }) => {
-        if (isPrivate === !!token) {
+        if (isPrivate === !!signed) {
           return <Component {...rest} />;
         }
 
         return (
           <Redirect
             to={{
-              pathname: token ? '/dashboard' : '/',
+              pathname: signed ? '/dashboard' : '/',
               state: { from: location },
             }}
           />

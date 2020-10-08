@@ -4,6 +4,7 @@ import { FiMail, FiLock } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
+import { useAuth } from '../../hooks/Auth';
 
 import signInImage from '../../assets/signin-image.jpg';
 
@@ -11,15 +12,16 @@ import { Input, Button } from '../../components/Form';
 
 import { Container, Form } from './styles';
 
-interface FormData {
+interface SignInFormData {
   email: string;
   password: string;
 }
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles | null>(null);
+  const { signIn } = useAuth();
 
-  const handleSubmit = useCallback(async (data: FormData) => {
+  const handleSubmit = useCallback(async (data: SignInFormData) => {
     try {
       formRef.current?.setErrors({});
 
@@ -31,6 +33,10 @@ const SignIn: React.FC = () => {
       });
 
       await schema.validate(data, { abortEarly: false });
+
+      const { email, password } = data;
+
+      signIn({ email, password });
     } catch (err) {
       const errors = getValidationErrors(err);
 
