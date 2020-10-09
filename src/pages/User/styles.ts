@@ -11,6 +11,12 @@ export const Container = styled.div`
   background-position: 50% center;
   height: 100vh;
 
+  .react-loading-skeleton {
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    height: 49px;
+  }
+
   > header {
     width: 100%;
     background: #f3f2f2;

@@ -5,7 +5,7 @@ interface DebounceArgs {
   delay: number;
 }
 
-const debounce = ({ callback, delay }: DebounceArgs): any => {
+const debounce = ({ callback, delay }: DebounceArgs): void => {
   if (timer) {
     clearTimeout(timer);
   }

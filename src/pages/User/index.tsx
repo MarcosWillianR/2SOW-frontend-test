@@ -1,4 +1,5 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import {
   FiLogOut,
   FiChevronLeft,
@@ -12,9 +13,11 @@ import { useHistory, Link } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
+
 import { useAuth } from '../../hooks/Auth';
 
-import { Input, Button, MaskInput } from '../../components/Form';
+import { Input, Button, MaskInput, CepInput } from '../../components/Form';
+import { CepData } from '../../components/Form/CepInput';
 
 import { Container, Form, FormTitle, FormWrapper } from './styles';
 
@@ -35,33 +38,67 @@ const User: React.FC = () => {
   const { signOut } = useAuth();
   const { goBack } = useHistory();
 
+  const [cepError, setCepError] = useState('');
+  const [currentCep, setCurrentCep] = useState('');
+  const [cepLoading, setCepLoading] = useState(false);
+
   const formRef = useRef<FormHandles | null>(null);
 
-  const handleSubmit = useCallback(async (data: UserFormData) => {
-    try {
-      console.log(data);
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: UserFormData) => {
+      try {
+        setCepError('');
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        cpf: Yup.string().required('CPF obrigatório'),
-        email: Yup.string()
-          .required('E-mail obrigatório')
-          .email('Digite um e-mail válido'),
-        nome: Yup.string().required('Nome obrigatório'),
-        endereco: Yup.object().shape({
-          bairro: Yup.string().required('Bairro obrigatório'),
-          cep: Yup.string().required('CEP obrigatório'),
-          cidade: Yup.string().required('Cidade obrigatória'),
-          numero: Yup.string().required('Número obrigatório'),
-          rua: Yup.string().required('Rua obrigatória'),
-        }),
-      });
+        const schema = Yup.object().shape({
+          cpf: Yup.string().required('CPF obrigatório'),
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          nome: Yup.string().required('Nome obrigatório'),
+          endereco: Yup.object().shape({
+            bairro: Yup.string().required('Bairro obrigatório'),
+            cep: Yup.string().required('CEP obrigatório'),
+            cidade: Yup.string().required('Cidade obrigatória'),
+            numero: Yup.string().required('Número obrigatório'),
+            rua: Yup.string().required('Rua obrigatória'),
+          }),
+        });
 
-      await schema.validate(data, { abortEarly: false });
-    } catch (err) {
-      const errors = getValidationErrors(err);
+        await schema.validate(data, { abortEarly: false });
+        if (currentCep.length < 1) throw Error();
+      } catch (err) {
+        const errors = getValidationErrors(err);
 
-      formRef.current?.setErrors(errors);
+        if (currentCep.length === 0) {
+          setCepError('CEP obrigatório');
+        }
+
+        if (currentCep.length > 0 && currentCep.length < 8) {
+          setCepError('CEP inválido');
+        }
+
+        formRef.current?.setErrors(errors);
+      }
+    },
+    [currentCep.length],
+  );
+
+  const handleCepChange = useCallback((cep: string) => {
+    setCurrentCep(cep);
+  }, []);
+
+  const handleCepLoading = useCallback(cepIsLoading => {
+    setCepLoading(cepIsLoading);
+  }, []);
+
+  const handleCepResponse = useCallback(({ rua, bairro, cidade }: CepData) => {
+    formRef.current?.setFieldValue('endereco.rua', rua);
+    formRef.current?.setFieldValue('endereco.bairro', bairro);
+    formRef.current?.setFieldValue('endereco.cidade', cidade);
+
+    if (rua && bairro && cidade) {
+      formRef.current?.getFieldRef('endereco.numero').focus();
     }
   }, []);
 
@@ -92,18 +129,31 @@ const User: React.FC = () => {
 
         <FormWrapper>
           <MaskInput mask="999.999.999-99" name="cpf" placeholder="CPF" />
-          <MaskInput mask="99999-999" name="endereco.cep" placeholder="CEP" />
+          <CepInput
+            cepResponse={handleCepResponse}
+            getCepCurrentValue={handleCepChange}
+            loading={handleCepLoading}
+            error={cepError}
+            mask="99999-999"
+          />
         </FormWrapper>
 
-        <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+        {cepLoading ? (
+          <Skeleton height={49} style={{ marginTop: 30 }} />
+        ) : (
+          <Input name="endereco.rua" placeholder="Rua" />
+        )}
 
         <FormWrapper>
-          <Input
-            customId="input_bairro"
-            name="endereco.bairro"
-            icon={FiMapPin}
-            placeholder="Bairro"
-          />
+          {cepLoading ? (
+            <Skeleton width={220.56} height={49} />
+          ) : (
+            <Input
+              customId="input_bairro"
+              name="endereco.bairro"
+              placeholder="Bairro"
+            />
+          )}
           <Input
             customId="input_numero"
             name="endereco.numero"
@@ -111,12 +161,15 @@ const User: React.FC = () => {
           />
         </FormWrapper>
 
-        <Input
-          customId="input_cidade"
-          name="endereco.cidade"
-          icon={FiMapPin}
-          placeholder="Cidade"
-        />
+        {cepLoading ? (
+          <Skeleton height={49} style={{ marginTop: 30 }} />
+        ) : (
+          <Input
+            customId="input_cidade"
+            name="endereco.cidade"
+            placeholder="Cidade"
+          />
+        )}
 
         <Button type="submit">Entrar</Button>
       </Form>
