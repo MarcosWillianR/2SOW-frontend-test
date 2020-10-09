@@ -12,6 +12,7 @@ interface SignInCredentials {
 
 interface AuthContextData {
   signIn(credentials: SignInCredentials): void;
+  signOut(): void;
   signed: boolean;
 }
 
@@ -36,8 +37,14 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({ token });
   }, []);
 
+  const signOut = useCallback(() => {
+    localStorage.removeItem('@MyUsers:token');
+
+    setData({} as AuthState);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ signed: !!data.token, signIn }}>
+    <AuthContext.Provider value={{ signed: !!data.token, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

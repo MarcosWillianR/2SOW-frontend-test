@@ -40,19 +40,13 @@ const SignIn: React.FC = () => {
         const { email, password } = data;
 
         signIn({ email, password });
-
-        addToast({
-          title: 'Teste toast',
-          type: 'success',
-          description: 'teste com descrição',
-        });
       } catch (err) {
         const errors = getValidationErrors(err);
 
         formRef.current?.setErrors(errors);
       }
     },
-    [signIn, addToast],
+    [signIn],
   );
 
   return (
