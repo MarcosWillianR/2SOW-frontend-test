@@ -1,0 +1,28 @@
+{
+  "usuarios": [
+    {
+      "nome": "Marcos Willian",
+      "cpf": "024.542.490-30",
+      "email": "markusuuuu@gmail.com",
+      "endereco": {
+        "cep": 91790300,
+        "rua": "rua david cherman",
+        "numero": 785,
+        "bairro": "restinga nova",
+        "cidade": "Porto Alegre"
+      }
+    },
+    {
+      "nome": "Jessica Alves",
+      "cpf": "213.123.123-45",
+      "email": "foo_bar@email.com",
+      "endereco": {
+        "cep": 13454000,
+        "rua": "rua talvez",
+        "numero": 785,
+        "bairro": "bairro azul",
+        "cidade": "cidade eterna"
+      }
+    }
+  ]
+}

@@ -5,7 +5,6 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/Auth';
-import { useToast } from '../../hooks/Toast';
 
 import signInImage from '../../assets/signin-image.jpg';
 
@@ -21,7 +20,6 @@ interface SignInFormData {
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles | null>(null);
   const { signIn } = useAuth();
-  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {

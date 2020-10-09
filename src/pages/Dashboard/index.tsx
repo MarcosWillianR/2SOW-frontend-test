@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiLogOut, FiPlus, FiEdit3, FiTrash2 } from 'react-icons/fi';
 
 import { useAuth } from '../../hooks/Auth';
+import { useToast } from '../../hooks/Toast';
+
+import apiClient from '../../services/apiClient';
 
 import SearchInput from '../../components/SearchInput';
+import SkeletonDashboard from '../../components/SkeletonDashboard';
+
 import {
   Container,
   UseListContainer,
@@ -12,8 +17,54 @@ import {
   UserListItemContent,
 } from './styles';
 
+interface User {
+  nome: string;
+  cpf: string;
+  email: string;
+  cidade: string;
+}
+
+interface UserRequest {
+  nome: string;
+  cpf: string;
+  email: string;
+  endereco: {
+    cidade: string;
+  };
+}
+
 const Dashboard: React.FC = () => {
   const { signOut } = useAuth();
+  const { addToast } = useToast();
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    setIsLoadingUsers(true);
+
+    apiClient
+      .get<UserRequest[]>('usuarios')
+      .then(response => {
+        const usersFormatted = response.data.map(
+          ({ nome, cpf, email, endereco }) => ({
+            nome,
+            cpf,
+            email,
+            cidade: endereco.cidade,
+          }),
+        );
+
+        setUsers(usersFormatted);
+      })
+      .catch(() =>
+        addToast({
+          title: 'Erro ao buscar usuários',
+          description: 'Aconteceu um erro ao buscar usuários, tente novamente.',
+          type: 'error',
+        }))
+      .finally(() => setIsLoadingUsers(false));
+  }, [addToast]);
 
   return (
     <Container>
@@ -51,19 +102,24 @@ const Dashboard: React.FC = () => {
             <strong>Cidade</strong>
           </UserListColumnTitles>
 
-          <UserListItemContent>
-            <span>Marcos Willian Almeida</span>
-            <span>024.542.490.30</span>
-            <span>markusuuuu@gmail.com</span>
-            <span>Porto Alegre - RS</span>
+          {isLoadingUsers && <SkeletonDashboard quantity={4} />}
 
-            <button type="button">
-              <FiEdit3 size={24} />
-            </button>
-            <button type="button">
-              <FiTrash2 size={24} />
-            </button>
-          </UserListItemContent>
+          {users.length !== 0 &&
+            users.map(user => (
+              <UserListItemContent key={user.cpf}>
+                <span>{user.nome}</span>
+                <span>{user.cpf}</span>
+                <span>{user.email}</span>
+                <span>{user.cidade}</span>
+
+                <button type="button">
+                  <FiEdit3 size={24} />
+                </button>
+                <button type="button">
+                  <FiTrash2 size={24} />
+                </button>
+              </UserListItemContent>
+            ))}
         </UserListContent>
       </UseListContainer>
     </Container>
