@@ -66,7 +66,8 @@ const Dashboard: React.FC = () => {
           title: 'Erro ao buscar usuários',
           description: 'Aconteceu um erro ao buscar usuários, tente novamente.',
           type: 'error',
-        }))
+        }),
+      )
       .finally(() => setIsLoadingUsers(false));
   }, [addToast]);
 

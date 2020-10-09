@@ -3,7 +3,7 @@ import { animated } from 'react-spring';
 
 interface ToastProps {
   type?: 'success' | 'error' | 'info';
-  description: boolean;
+  description: number;
 }
 
 const toastTypeVariations = {
@@ -21,7 +21,7 @@ const toastTypeVariations = {
   `,
 };
 
-export const Container = styled(animated.li)<ToastProps>`
+export const Container = styled(animated.li) <ToastProps>`
   width: 360px;
   position: relative;
   padding: 16px 30px 16px 16px;

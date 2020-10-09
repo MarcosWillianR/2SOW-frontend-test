@@ -56,9 +56,8 @@ const SignIn: React.FC = () => {
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h1>Login</h1>
 
-        <Input mask="" name="email" icon={FiMail} placeholder="E-mail" />
+        <Input name="email" icon={FiMail} placeholder="E-mail" />
         <Input
-          mask=""
           type="password"
           name="password"
           icon={FiLock}

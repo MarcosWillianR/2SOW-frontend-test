@@ -9,12 +9,12 @@ import {
 
 import { useHistory, Link } from 'react-router-dom';
 
-import { FormHandles, Scope } from '@unform/core';
+import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/Auth';
 
-import { Input, Button } from '../../components/Form';
+import { Input, Button, MaskInput } from '../../components/Form';
 
 import { Container, Form, FormTitle, FormWrapper } from './styles';
 
@@ -39,6 +39,7 @@ const User: React.FC = () => {
 
   const handleSubmit = useCallback(async (data: UserFormData) => {
     try {
+      console.log(data);
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
@@ -86,26 +87,24 @@ const User: React.FC = () => {
           <p>preencha os campos abaixo para cadastrar um novo usuário</p>
         </FormTitle>
 
-        <Input mask="" name="nome" icon={FiUser} placeholder="Nome" />
-        <Input mask="" name="email" icon={FiMail} placeholder="E-mail" />
+        <Input name="nome" icon={FiUser} placeholder="Nome" />
+        <Input name="email" icon={FiMail} placeholder="E-mail" />
 
         <FormWrapper>
-          <Input mask="999.999.999-99" name="cpf" placeholder="CPF" />
-          <Input mask="99999-999" name="endereco.cep" placeholder="CEP" />
+          <MaskInput mask="999.999.999-99" name="cpf" placeholder="CPF" />
+          <MaskInput mask="99999-999" name="endereco.cep" placeholder="CEP" />
         </FormWrapper>
 
-        <Input mask="" name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+        <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
 
         <FormWrapper>
           <Input
-            mask=""
             customId="input_bairro"
             name="endereco.bairro"
             icon={FiMapPin}
             placeholder="Bairro"
           />
           <Input
-            mask=""
             customId="input_numero"
             name="endereco.numero"
             placeholder="Número"
@@ -113,7 +112,6 @@ const User: React.FC = () => {
         </FormWrapper>
 
         <Input
-          mask=""
           customId="input_cidade"
           name="endereco.cidade"
           icon={FiMapPin}
