@@ -9,15 +9,17 @@ export const Container = styled.div`
 
     padding: 22px 26px;
 
-    h1 {
+    a {
+      flex: 1;
+      text-decoration: none;
       font-size: 48px;
       font-weight: 700;
       color: #547eff;
-      flex: 1;
       text-align: center;
+      margin-left: 24px;
     }
 
-    div {
+    > div {
       margin: 0 auto;
       width: 100%;
       max-width: 1100px;
@@ -77,8 +79,7 @@ export const UseListContainer = styled.main`
       color: #9f9999;
     }
 
-    button {
-      border: 0;
+    a {
       padding: 13px;
       border-radius: 10px;
       background: #f3f2f2;
@@ -152,6 +153,7 @@ export const UserListItemContent = styled.div`
     border: 0;
     background: transparent;
     margin-top: 8px;
+    text-align: right;
 
     svg {
       color: #547eff;

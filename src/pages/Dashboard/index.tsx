@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FiLogOut, FiPlus, FiEdit3, FiTrash2 } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import { useAuth } from '../../hooks/Auth';
 import { useToast } from '../../hooks/Toast';
@@ -101,7 +102,7 @@ const Dashboard: React.FC = () => {
     <Container>
       <header>
         <div>
-          <h1>MY USERS</h1>
+          <Link to="/dashboard">MY USERS</Link>
 
           <button type="button" onClick={signOut}>
             <FiLogOut size={24} />
@@ -117,9 +118,9 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div>
-            <button type="button">
+            <Link to="/user">
               <FiPlus size={24} />
-            </button>
+            </Link>
 
             <SearchInput
               loading={isLoading => handleSearchLoading(isLoading)}

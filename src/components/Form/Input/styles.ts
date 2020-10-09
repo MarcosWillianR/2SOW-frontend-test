@@ -29,6 +29,7 @@ export const Container = styled.div<ContainerProps>`
     ${props => !props.hasIcon && 'padding: 0 24px;'}
     align-self: stretch;
     flex: 1;
+    width: 100%;
     border-radius: 10px;
     background: transparent;
     border: 0;
