@@ -17,7 +17,7 @@ import {
   UserListItemContent,
 } from './styles';
 
-interface User {
+export interface User {
   id: string;
   nome: string;
   cpf: string;
@@ -25,7 +25,7 @@ interface User {
   cidade: string;
 }
 
-interface UserRequest {
+export interface UserRequest {
   id: string;
   nome: string;
   cpf: string;
@@ -89,6 +89,14 @@ const Dashboard: React.FC = () => {
     [addToast],
   );
 
+  const handleSearchLoading = useCallback((isLoading: boolean) => {
+    setIsLoadingUsers(isLoading);
+  }, []);
+
+  const handleUpdateUsers = useCallback((updatedUsers: User[]) => {
+    setUsers(updatedUsers);
+  }, []);
+
   return (
     <Container>
       <header>
@@ -113,7 +121,10 @@ const Dashboard: React.FC = () => {
               <FiPlus size={24} />
             </button>
 
-            <SearchInput />
+            <SearchInput
+              loading={isLoading => handleSearchLoading(isLoading)}
+              handleUpdateUsers={handleUpdateUsers}
+            />
           </div>
         </header>
 

@@ -57,6 +57,7 @@ export const UseListContainer = styled.main`
 
     .search-input {
       min-width: 450px;
+      height: 50px;
     }
 
     > div:last-of-type {
