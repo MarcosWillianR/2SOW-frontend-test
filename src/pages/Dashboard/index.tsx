@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FiLogOut, FiPlus, FiEdit3, FiTrash2 } from 'react-icons/fi';
 
 import { useAuth } from '../../hooks/Auth';
@@ -18,6 +18,7 @@ import {
 } from './styles';
 
 interface User {
+  id: string;
   nome: string;
   cpf: string;
   email: string;
@@ -25,6 +26,7 @@ interface User {
 }
 
 interface UserRequest {
+  id: string;
   nome: string;
   cpf: string;
   email: string;
@@ -47,7 +49,8 @@ const Dashboard: React.FC = () => {
       .get<UserRequest[]>('usuarios')
       .then(response => {
         const usersFormatted = response.data.map(
-          ({ nome, cpf, email, endereco }) => ({
+          ({ id, nome, cpf, email, endereco }) => ({
+            id,
             nome,
             cpf,
             email,
@@ -65,6 +68,26 @@ const Dashboard: React.FC = () => {
         }))
       .finally(() => setIsLoadingUsers(false));
   }, [addToast]);
+
+  const handleDeleteUser = useCallback(
+    async (user_id: string) => {
+      try {
+        setIsLoadingUsers(true);
+        await apiClient.delete(`usuarios/${user_id}`);
+      } catch {
+        addToast({
+          title: 'Erro ao deletar usuário',
+          description:
+            'Aconteceu um erro ao tentar deletar o usuário, tente novamente.',
+          type: 'error',
+        });
+      } finally {
+        setIsLoadingUsers(false);
+        setUsers(state => state.filter(user => user.id !== user_id));
+      }
+    },
+    [addToast],
+  );
 
   return (
     <Container>
@@ -102,11 +125,12 @@ const Dashboard: React.FC = () => {
             <strong>Cidade</strong>
           </UserListColumnTitles>
 
-          {isLoadingUsers && <SkeletonDashboard quantity={4} />}
+          {isLoadingUsers && <SkeletonDashboard quantity={users.length} />}
 
-          {users.length !== 0 &&
+          {!isLoadingUsers &&
+            users.length !== 0 &&
             users.map(user => (
-              <UserListItemContent key={user.cpf}>
+              <UserListItemContent key={user.id}>
                 <span>{user.nome}</span>
                 <span>{user.cpf}</span>
                 <span>{user.email}</span>
@@ -115,7 +139,7 @@ const Dashboard: React.FC = () => {
                 <button type="button">
                   <FiEdit3 size={24} />
                 </button>
-                <button type="button">
+                <button type="button" onClick={() => handleDeleteUser(user.id)}>
                   <FiTrash2 size={24} />
                 </button>
               </UserListItemContent>
