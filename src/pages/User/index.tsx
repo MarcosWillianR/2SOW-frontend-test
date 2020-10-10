@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { FiLogOut, FiChevronLeft, FiMail, FiUser } from 'react-icons/fi';
 
@@ -38,6 +38,7 @@ const User: React.FC = () => {
   const [cepError, setCepError] = useState('');
   const [currentCep, setCurrentCep] = useState('');
   const [cepLoading, setCepLoading] = useState(false);
+  const [cepDefaultValue, setCepDefaultValue] = useState('');
 
   const formRef = useRef<FormHandles | null>(null);
 
@@ -125,6 +126,10 @@ const User: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setCepDefaultValue('91790300');
+  }, []);
+
   return (
     <Container>
       <header>
@@ -153,6 +158,7 @@ const User: React.FC = () => {
         <FormWrapper>
           <MaskInput mask="999.999.999-99" name="cpf" placeholder="CPF" />
           <CepInput
+            defaultValue={cepDefaultValue}
             cepResponse={handleCepResponse}
             getCepCurrentValue={handleCepChange}
             loading={handleCepLoading}
@@ -164,19 +170,19 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input name="endereco.rua" placeholder="Rua" />
-        )}
+            <Input name="endereco.rua" placeholder="Rua" />
+          )}
 
         <FormWrapper>
           {cepLoading ? (
             <Skeleton width={220.56} height={49} />
           ) : (
-            <Input
-              customId="input_bairro"
-              name="endereco.bairro"
-              placeholder="Bairro"
-            />
-          )}
+              <Input
+                customId="input_bairro"
+                name="endereco.bairro"
+                placeholder="Bairro"
+              />
+            )}
           <Input
             customId="input_numero"
             name="endereco.numero"
@@ -187,12 +193,12 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input
-            customId="input_cidade"
-            name="endereco.cidade"
-            placeholder="Cidade"
-          />
-        )}
+            <Input
+              customId="input_cidade"
+              name="endereco.cidade"
+              placeholder="Cidade"
+            />
+          )}
 
         <Button type="submit">Cadastrar</Button>
       </Form>

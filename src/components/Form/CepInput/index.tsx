@@ -25,6 +25,7 @@ interface CepResponse {
 interface CepInputProps extends InputProps {
   customId?: string;
   error?: string;
+  defaultValue?: string;
   getCepCurrentValue(cep: string): void;
   loading(isLoading: boolean): void;
   cepResponse(cepData: CepData): void;
@@ -32,7 +33,7 @@ interface CepInputProps extends InputProps {
 
 const CepInput: React.FC<CepInputProps> = ({
   customId,
-  defaultValue,
+  defaultValue = '',
   getCepCurrentValue,
   cepResponse,
   loading,
@@ -42,6 +43,7 @@ const CepInput: React.FC<CepInputProps> = ({
   const inputRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
   const [cepData, setCepData] = useState<CepData>({} as CepData);
+  const [cepValue, setCepValue] = useState('');
 
   const { addToast } = useToast();
 
@@ -91,6 +93,7 @@ const CepInput: React.FC<CepInputProps> = ({
 
   const handleCepChange = useCallback(
     async ({ target }) => {
+      setCepValue(target.value);
       const clearedCEP = target.value.replace(/_|-/g, '');
 
       getCepCurrentValue(clearedCEP);
@@ -113,6 +116,21 @@ const CepInput: React.FC<CepInputProps> = ({
     [loading, getCepCurrentValue, handleGetCepAddress, cepResponse],
   );
 
+  useEffect(() => {
+    if (defaultValue.length === 8) {
+      setCepValue(defaultValue);
+
+      loading(true);
+
+      debounce({
+        callback: async () => {
+          await handleGetCepAddress(defaultValue);
+        },
+        delay: 500,
+      });
+    }
+  }, [defaultValue, loading, handleGetCepAddress]);
+
   return (
     <Container
       id={customId}
@@ -123,10 +141,10 @@ const CepInput: React.FC<CepInputProps> = ({
       <ReactInputMask
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
-        defaultValue={defaultValue}
         ref={inputRef}
         placeholder="CEP"
         onChange={handleCepChange}
+        value={cepValue}
         {...rest}
       />
 
