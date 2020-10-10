@@ -59,6 +59,12 @@ const CepInput: React.FC<CepInputProps> = ({
     cepResponse(cepData);
   }, [cepResponse, cepData]);
 
+  useEffect(() => {
+    if (defaultValue.length === 8) {
+      setCepValue(defaultValue);
+    }
+  }, [defaultValue]);
+
   const handleGetCepAddress = useCallback(
     async (cep: string) => {
       try {
@@ -115,21 +121,6 @@ const CepInput: React.FC<CepInputProps> = ({
     },
     [loading, getCepCurrentValue, handleGetCepAddress, cepResponse],
   );
-
-  useEffect(() => {
-    if (defaultValue.length === 8) {
-      setCepValue(defaultValue);
-
-      loading(true);
-
-      debounce({
-        callback: async () => {
-          await handleGetCepAddress(defaultValue);
-        },
-        delay: 500,
-      });
-    }
-  }, [defaultValue, loading, handleGetCepAddress]);
 
   return (
     <Container
