@@ -1,20 +1,16 @@
 import React, { useCallback, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import {
-  FiLogOut,
-  FiChevronLeft,
-  FiMail,
-  FiUser,
-  FiMapPin,
-} from 'react-icons/fi';
+import { FiLogOut, FiChevronLeft, FiMail, FiUser } from 'react-icons/fi';
 
 import { useHistory, Link } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
+import apiClient from '../../services/apiClient';
 
 import { useAuth } from '../../hooks/Auth';
+import { useToast } from '../../hooks/Toast';
 
 import { Input, Button, MaskInput, CepInput } from '../../components/Form';
 import { CepData } from '../../components/Form/CepInput';
@@ -36,6 +32,7 @@ interface UserFormData {
 
 const User: React.FC = () => {
   const { signOut } = useAuth();
+  const { addToast } = useToast();
   const { goBack } = useHistory();
 
   const [cepError, setCepError] = useState('');
@@ -58,7 +55,6 @@ const User: React.FC = () => {
           nome: Yup.string().required('Nome obrigatório'),
           endereco: Yup.object().shape({
             bairro: Yup.string().required('Bairro obrigatório'),
-            cep: Yup.string().required('CEP obrigatório'),
             cidade: Yup.string().required('Cidade obrigatória'),
             numero: Yup.string().required('Número obrigatório'),
             rua: Yup.string().required('Rua obrigatória'),
@@ -67,8 +63,37 @@ const User: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
         if (currentCep.length < 1) throw Error();
+
+        const formattedData = {
+          ...data,
+          endereco: {
+            ...data.endereco,
+            cep: Number(currentCep),
+            numero: Number(data.endereco.numero),
+          },
+        };
+
+        await apiClient.post('usuarios', formattedData);
+
+        addToast({
+          type: 'success',
+          title: 'Usuário cadastrado com sucesso.',
+        });
+
+        goBack();
       } catch (err) {
-        const errors = getValidationErrors(err);
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao cadastrar novo usuário.',
+            description:
+              'Ocorreu um erro ao tentar cadastrar, tente novamente.',
+          });
+        }
 
         if (currentCep.length === 0) {
           setCepError('CEP obrigatório');
@@ -77,11 +102,9 @@ const User: React.FC = () => {
         if (currentCep.length > 0 && currentCep.length < 8) {
           setCepError('CEP inválido');
         }
-
-        formRef.current?.setErrors(errors);
       }
     },
-    [currentCep.length],
+    [currentCep, addToast, goBack],
   );
 
   const handleCepChange = useCallback((cep: string) => {
@@ -171,7 +194,7 @@ const User: React.FC = () => {
           />
         )}
 
-        <Button type="submit">Entrar</Button>
+        <Button type="submit">Cadastrar</Button>
       </Form>
     </Container>
   );
