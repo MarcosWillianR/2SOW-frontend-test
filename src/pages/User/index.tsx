@@ -208,20 +208,20 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-            <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
-          )}
+          <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+        )}
 
         <FormWrapper>
           {cepLoading ? (
             <Skeleton width={220.56} height={49} />
           ) : (
-              <Input
-                icon={FiMapPin}
-                customId="input_bairro"
-                name="endereco.bairro"
-                placeholder="Bairro"
-              />
-            )}
+            <Input
+              icon={FiMapPin}
+              customId="input_bairro"
+              name="endereco.bairro"
+              placeholder="Bairro"
+            />
+          )}
           <Input
             customId="input_numero"
             name="endereco.numero"
@@ -232,13 +232,13 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-            <Input
-              icon={FiMapPin}
-              customId="input_cidade"
-              name="endereco.cidade"
-              placeholder="Cidade"
-            />
-          )}
+          <Input
+            icon={FiMapPin}
+            customId="input_cidade"
+            name="endereco.cidade"
+            placeholder="Cidade"
+          />
+        )}
 
         <Button loading={submitLoading} type="submit">
           {isEditPage ? 'Editar' : 'Cadastrar'}
