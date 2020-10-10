@@ -12,6 +12,19 @@
         "cep": 91790300
       },
       "id": 1
+    },
+    {
+      "nome": "José silva Almeida",
+      "email": "jose_silva@gmail.com",
+      "cpf": "024.542.490-30",
+      "endereco": {
+        "rua": "Rua David Cherman",
+        "bairro": "Restinga",
+        "numero": 4867,
+        "cidade": "Porto Alegre",
+        "cep": 91790300
+      },
+      "id": 2
     }
   ]
 }

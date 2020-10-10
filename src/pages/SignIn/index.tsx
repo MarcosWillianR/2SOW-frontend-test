@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FiMail, FiLock } from 'react-icons/fi';
 
 import { FormHandles } from '@unform/core';
@@ -21,6 +21,8 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles | null>(null);
   const { signIn } = useAuth();
 
+  const [submitLoading, setSubmitLoading] = useState(false);
+
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
       try {
@@ -35,6 +37,8 @@ const SignIn: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
+        setSubmitLoading(true);
+
         const { email, password } = data;
 
         signIn({ email, password });
@@ -42,6 +46,8 @@ const SignIn: React.FC = () => {
         const errors = getValidationErrors(err);
 
         formRef.current?.setErrors(errors);
+      } finally {
+        setSubmitLoading(false);
       }
     },
     [signIn],
@@ -64,7 +70,9 @@ const SignIn: React.FC = () => {
           placeholder="Senha"
         />
 
-        <Button type="submit">Entrar</Button>
+        <Button loading={submitLoading} type="submit">
+          Entrar
+        </Button>
       </Form>
     </Container>
   );

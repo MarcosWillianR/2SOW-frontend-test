@@ -53,6 +53,8 @@ const User: React.FC = () => {
   const [cepLoading, setCepLoading] = useState(false);
   const [cepDefaultValue, setCepDefaultValue] = useState('');
 
+  const [submitLoading, setSubmitLoading] = useState(false);
+
   const formRef = useRef<FormHandles | null>(null);
 
   const handleSubmit = useCallback(
@@ -77,6 +79,8 @@ const User: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
         if (currentCep.length < 1) throw Error();
+
+        setSubmitLoading(true);
 
         const formattedData = {
           ...data,
@@ -124,6 +128,8 @@ const User: React.FC = () => {
         if (currentCep.length > 0 && currentCep.length < 8) {
           setCepError('CEP inválido');
         }
+      } finally {
+        setSubmitLoading(false);
       }
     },
     [currentCep, addToast, goBack, isEditPage, userParams.id],
@@ -202,20 +208,20 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
-        )}
+            <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+          )}
 
         <FormWrapper>
           {cepLoading ? (
             <Skeleton width={220.56} height={49} />
           ) : (
-            <Input
-              icon={FiMapPin}
-              customId="input_bairro"
-              name="endereco.bairro"
-              placeholder="Bairro"
-            />
-          )}
+              <Input
+                icon={FiMapPin}
+                customId="input_bairro"
+                name="endereco.bairro"
+                placeholder="Bairro"
+              />
+            )}
           <Input
             customId="input_numero"
             name="endereco.numero"
@@ -226,15 +232,17 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input
-            icon={FiMapPin}
-            customId="input_cidade"
-            name="endereco.cidade"
-            placeholder="Cidade"
-          />
-        )}
+            <Input
+              icon={FiMapPin}
+              customId="input_cidade"
+              name="endereco.cidade"
+              placeholder="Cidade"
+            />
+          )}
 
-        <Button type="submit">{isEditPage ? 'Editar' : 'Cadastrar'}</Button>
+        <Button loading={submitLoading} type="submit">
+          {isEditPage ? 'Editar' : 'Cadastrar'}
+        </Button>
       </Form>
     </Container>
   );
