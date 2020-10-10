@@ -1,3 +1,17 @@
 {
-  "usuarios": []
+  "usuarios": [
+    {
+      "nome": "Marcos Willian Almeida",
+      "email": "markusuuuu@gmail.com",
+      "cpf": "024.542.490-30",
+      "endereco": {
+        "rua": "Rua David Cherman",
+        "bairro": "Restinga",
+        "numero": 4967,
+        "cidade": "Porto Alegre",
+        "cep": 91790300
+      },
+      "id": 1
+    }
+  ]
 }

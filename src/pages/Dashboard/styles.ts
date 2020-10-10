@@ -149,7 +149,8 @@ export const UserListItemContent = styled.div`
     font-weight: 400;
   }
 
-  button {
+  button,
+  a {
     border: 0;
     background: transparent;
     margin-top: 8px;

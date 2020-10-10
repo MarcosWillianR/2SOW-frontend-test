@@ -1,8 +1,14 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { FiLogOut, FiChevronLeft, FiMail, FiUser } from 'react-icons/fi';
+import {
+  FiLogOut,
+  FiChevronLeft,
+  FiMail,
+  FiUser,
+  FiMapPin,
+} from 'react-icons/fi';
 
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useParams } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -30,10 +36,17 @@ interface UserFormData {
   };
 }
 
+interface UserParam {
+  id?: string;
+}
+
 const User: React.FC = () => {
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { goBack } = useHistory();
+  const userParams: UserParam = useParams();
+
+  const isEditPage = !!userParams.id;
 
   const [cepError, setCepError] = useState('');
   const [currentCep, setCurrentCep] = useState('');
@@ -74,13 +87,21 @@ const User: React.FC = () => {
           },
         };
 
-        await apiClient.post('usuarios', formattedData);
+        if (isEditPage) {
+          await apiClient.put(`usuarios/${userParams.id}`, formattedData);
 
-        addToast({
-          type: 'success',
-          title: 'Usuário cadastrado com sucesso.',
-        });
+          addToast({
+            type: 'success',
+            title: 'Usuário editado com sucesso.',
+          });
+        } else {
+          await apiClient.post('usuarios', formattedData);
 
+          addToast({
+            type: 'success',
+            title: 'Usuário cadastrado com sucesso.',
+          });
+        }
         goBack();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -105,7 +126,7 @@ const User: React.FC = () => {
         }
       }
     },
-    [currentCep, addToast, goBack],
+    [currentCep, addToast, goBack, isEditPage, userParams.id],
   );
 
   const handleCepChange = useCallback((cep: string) => {
@@ -127,8 +148,16 @@ const User: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setCepDefaultValue('91790300');
-  }, []);
+    if (userParams.id) {
+      apiClient
+        .get<UserFormData>(`usuarios/${userParams.id}`)
+        .then(response => {
+          formRef.current?.setData(response.data);
+          setCepDefaultValue(String(response.data.endereco.cep));
+          setCurrentCep(String(response.data.endereco.cep));
+        });
+    }
+  }, [userParams.id]);
 
   return (
     <Container>
@@ -148,8 +177,11 @@ const User: React.FC = () => {
 
       <Form ref={formRef} onSubmit={handleSubmit}>
         <FormTitle>
-          <h1>Cadastrar novo usuário</h1>
-          <p>preencha os campos abaixo para cadastrar um novo usuário</p>
+          <h1>{isEditPage ? 'Editar usuário' : 'Cadastrar novo usuário'}</h1>
+          <p>
+            preencha os campos abaixo para
+            {isEditPage ? ' editar o usuário' : ' cadastrar um novo usuário'}
+          </p>
         </FormTitle>
 
         <Input name="nome" icon={FiUser} placeholder="Nome" />
@@ -170,19 +202,20 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-            <Input name="endereco.rua" placeholder="Rua" />
-          )}
+          <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+        )}
 
         <FormWrapper>
           {cepLoading ? (
             <Skeleton width={220.56} height={49} />
           ) : (
-              <Input
-                customId="input_bairro"
-                name="endereco.bairro"
-                placeholder="Bairro"
-              />
-            )}
+            <Input
+              icon={FiMapPin}
+              customId="input_bairro"
+              name="endereco.bairro"
+              placeholder="Bairro"
+            />
+          )}
           <Input
             customId="input_numero"
             name="endereco.numero"
@@ -193,14 +226,15 @@ const User: React.FC = () => {
         {cepLoading ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-            <Input
-              customId="input_cidade"
-              name="endereco.cidade"
-              placeholder="Cidade"
-            />
-          )}
+          <Input
+            icon={FiMapPin}
+            customId="input_cidade"
+            name="endereco.cidade"
+            placeholder="Cidade"
+          />
+        )}
 
-        <Button type="submit">Cadastrar</Button>
+        <Button type="submit">{isEditPage ? 'Editar' : 'Cadastrar'}</Button>
       </Form>
     </Container>
   );

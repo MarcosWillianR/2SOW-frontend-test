@@ -149,9 +149,9 @@ const Dashboard: React.FC = () => {
                 <span>{user.email}</span>
                 <span>{user.cidade}</span>
 
-                <button type="button">
+                <Link to={`/user/${user.id}`}>
                   <FiEdit3 size={24} />
-                </button>
+                </Link>
                 <button type="button" onClick={() => handleDeleteUser(user.id)}>
                   <FiTrash2 size={24} />
                 </button>
