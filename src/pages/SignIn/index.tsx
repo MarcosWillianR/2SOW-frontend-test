@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { FiMail, FiLock } from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -20,6 +21,7 @@ interface SignInFormData {
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles | null>(null);
   const { signIn } = useAuth();
+  const { push } = useHistory();
 
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -42,6 +44,8 @@ const SignIn: React.FC = () => {
         const { email, password } = data;
 
         signIn({ email, password });
+
+        push('/dashboard');
       } catch (err) {
         const errors = getValidationErrors(err);
 
@@ -50,7 +54,7 @@ const SignIn: React.FC = () => {
         setSubmitLoading(false);
       }
     },
-    [signIn],
+    [signIn, push],
   );
 
   return (
