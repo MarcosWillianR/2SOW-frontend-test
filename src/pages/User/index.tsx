@@ -187,6 +187,12 @@ const User: React.FC = () => {
     }
   }, [userParams.id, addToast]);
 
+  useEffect(() => {
+    if (Object.keys(user).length > 1) {
+      formRef.current?.setData(user);
+    }
+  }, [user]);
+
   return (
     <Container>
       <header>
@@ -215,35 +221,20 @@ const User: React.FC = () => {
         {isLoadingForm ? (
           <Skeleton height={49} />
         ) : (
-          <Input
-            name="nome"
-            defaultValue={user?.nome}
-            icon={FiUser}
-            placeholder="Nome"
-          />
+          <Input name="nome" icon={FiUser} placeholder="Nome" />
         )}
 
         {isLoadingForm ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input
-            defaultValue={user?.email}
-            name="email"
-            icon={FiMail}
-            placeholder="E-mail"
-          />
+          <Input name="email" icon={FiMail} placeholder="E-mail" />
         )}
 
         <FormWrapper>
           {isLoadingForm ? (
             <Skeleton width={186} height={49} />
           ) : (
-            <MaskInput
-              defaultValue={user?.cpf}
-              mask=""
-              name="cpf"
-              placeholder="CPF"
-            />
+            <MaskInput mask="999.999.999-99" name="cpf" placeholder="CPF" />
           )}
 
           {isLoadingForm ? (
@@ -263,12 +254,7 @@ const User: React.FC = () => {
         {cepLoading || isLoadingForm ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input
-            defaultValue={user?.endereco?.rua}
-            name="endereco.rua"
-            icon={FiMapPin}
-            placeholder="Rua"
-          />
+          <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
         )}
 
         <FormWrapper>
@@ -279,7 +265,6 @@ const User: React.FC = () => {
               icon={FiMapPin}
               customId="input_bairro"
               name="endereco.bairro"
-              defaultValue={user?.endereco?.bairro}
               placeholder="Bairro"
             />
           )}
@@ -290,7 +275,6 @@ const User: React.FC = () => {
             <Input
               customId="input_numero"
               name="endereco.numero"
-              defaultValue={user?.endereco?.numero}
               placeholder="Número"
             />
           )}
@@ -303,7 +287,6 @@ const User: React.FC = () => {
             icon={FiMapPin}
             customId="input_cidade"
             name="endereco.cidade"
-            defaultValue={user?.endereco?.cidade}
             placeholder="Cidade"
           />
         )}
