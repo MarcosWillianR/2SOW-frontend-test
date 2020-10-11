@@ -54,6 +54,9 @@ const User: React.FC = () => {
   const [cepDefaultValue, setCepDefaultValue] = useState('');
 
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
+
+  const [user, setUser] = useState({} as UserFormData);
 
   const formRef = useRef<FormHandles | null>(null);
 
@@ -155,15 +158,34 @@ const User: React.FC = () => {
 
   useEffect(() => {
     if (userParams.id) {
+      setIsLoadingForm(true);
+
       apiClient
         .get<UserFormData>(`usuarios/${userParams.id}`)
         .then(response => {
-          formRef.current?.setData(response.data);
+          setIsLoadingForm(false);
+
+          setUser({
+            ...response.data,
+            cpf: String(response.data.cpf),
+          });
+
           setCepDefaultValue(String(response.data.endereco.cep));
           setCurrentCep(String(response.data.endereco.cep));
+        })
+        .catch(() => {
+          addToast({
+            type: 'error',
+            title: 'Erro ao buscar usuário.',
+            description:
+              'Ocorreu um erro ao tentar encontrar esse usuário, tente novamente.',
+          });
+        })
+        .finally(() => {
+          setIsLoadingForm(false);
         });
     }
-  }, [userParams.id]);
+  }, [userParams.id, addToast]);
 
   return (
     <Container>
@@ -190,52 +212,98 @@ const User: React.FC = () => {
           </p>
         </FormTitle>
 
-        <Input name="nome" icon={FiUser} placeholder="Nome" />
-        <Input name="email" icon={FiMail} placeholder="E-mail" />
-
-        <FormWrapper>
-          <MaskInput mask="999.999.999-99" name="cpf" placeholder="CPF" />
-          <CepInput
-            defaultValue={cepDefaultValue}
-            cepResponse={handleCepResponse}
-            getCepCurrentValue={handleCepChange}
-            loading={handleCepLoading}
-            error={cepError}
-            mask="99999-999"
+        {isLoadingForm ? (
+          <Skeleton height={49} />
+        ) : (
+          <Input
+            name="nome"
+            defaultValue={user?.nome}
+            icon={FiUser}
+            placeholder="Nome"
           />
-        </FormWrapper>
+        )}
 
-        {cepLoading ? (
+        {isLoadingForm ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
-          <Input name="endereco.rua" icon={FiMapPin} placeholder="Rua" />
+          <Input
+            defaultValue={user?.email}
+            name="email"
+            icon={FiMail}
+            placeholder="E-mail"
+          />
         )}
 
         <FormWrapper>
-          {cepLoading ? (
+          {isLoadingForm ? (
+            <Skeleton width={186} height={49} />
+          ) : (
+            <MaskInput
+              defaultValue={user?.cpf}
+              mask=""
+              name="cpf"
+              placeholder="CPF"
+            />
+          )}
+
+          {isLoadingForm ? (
+            <Skeleton width={186} height={49} />
+          ) : (
+            <CepInput
+              defaultValue={cepDefaultValue}
+              cepResponse={handleCepResponse}
+              getCepCurrentValue={handleCepChange}
+              loading={handleCepLoading}
+              error={cepError}
+              mask="99999-999"
+            />
+          )}
+        </FormWrapper>
+
+        {cepLoading || isLoadingForm ? (
+          <Skeleton height={49} style={{ marginTop: 30 }} />
+        ) : (
+          <Input
+            defaultValue={user?.endereco?.rua}
+            name="endereco.rua"
+            icon={FiMapPin}
+            placeholder="Rua"
+          />
+        )}
+
+        <FormWrapper>
+          {cepLoading || isLoadingForm ? (
             <Skeleton width={220.56} height={49} />
           ) : (
             <Input
               icon={FiMapPin}
               customId="input_bairro"
               name="endereco.bairro"
+              defaultValue={user?.endereco?.bairro}
               placeholder="Bairro"
             />
           )}
-          <Input
-            customId="input_numero"
-            name="endereco.numero"
-            placeholder="Número"
-          />
+
+          {isLoadingForm ? (
+            <Skeleton width={140.45} height={49} />
+          ) : (
+            <Input
+              customId="input_numero"
+              name="endereco.numero"
+              defaultValue={user?.endereco?.numero}
+              placeholder="Número"
+            />
+          )}
         </FormWrapper>
 
-        {cepLoading ? (
+        {cepLoading || isLoadingForm ? (
           <Skeleton height={49} style={{ marginTop: 30 }} />
         ) : (
           <Input
             icon={FiMapPin}
             customId="input_cidade"
             name="endereco.cidade"
+            defaultValue={user?.endereco?.cidade}
             placeholder="Cidade"
           />
         )}
