@@ -61,13 +61,13 @@ const Dashboard: React.FC = () => {
 
         setUsers(usersFormatted);
       })
-      .catch(() =>
+      .catch(() => {
         addToast({
           title: 'Erro ao buscar usuários',
           description: 'Aconteceu um erro ao buscar usuários, tente novamente.',
           type: 'error',
-        }),
-      )
+        });
+      })
       .finally(() => setIsLoadingUsers(false));
   }, [addToast]);
 
@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
           {!isLoadingUsers &&
             users.length !== 0 &&
             users.map(user => (
-              <UserListItemContent key={user.id}>
+              <UserListItemContent data-testid="list-item" key={user.id}>
                 <span>{user.nome}</span>
                 <span>{user.cpf}</span>
                 <span>{user.email}</span>
@@ -152,7 +152,12 @@ const Dashboard: React.FC = () => {
                 <Link to={`/user/${user.id}`}>
                   <FiEdit3 size={24} />
                 </Link>
-                <button type="button" onClick={() => handleDeleteUser(user.id)}>
+
+                <button
+                  data-testid="delete-item-button"
+                  type="button"
+                  onClick={() => handleDeleteUser(user.id)}
+                >
                   <FiTrash2 size={24} />
                 </button>
               </UserListItemContent>

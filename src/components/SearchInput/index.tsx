@@ -73,6 +73,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   return (
     <Container className="search-input">
       <input
+        data-testid="search-input"
         type="text"
         placeholder="Buscar pelo nome"
         onChange={handleChangeInput}
